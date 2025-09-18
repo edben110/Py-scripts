@@ -8,6 +8,6 @@ if n:
     for n in lista2[:]:
         m = min(lista2)
         lista3.append(m)
-       lista2.remove(m)
+        lista2.remove(m)
 print(lista2)
 print(lista3)
