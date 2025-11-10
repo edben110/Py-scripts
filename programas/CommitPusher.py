@@ -77,7 +77,6 @@ def obtener_token():
     return token
 
 def seleccionar_rama(repo):
-    """Detecta ramas existentes y permite al usuario elegir o crear una."""
     ramas_locales = [h.name for h in repo.heads]
     ramas_remotas = []
     try:
@@ -98,7 +97,6 @@ def seleccionar_rama(repo):
             repo.git.checkout(rama)
             return rama
 
-    # Si no hay ramas o el usuario desea crear una nueva
     rama = input("🆕 Nombre de nueva rama (por defecto 'main'): ").strip() or "main"
     try:
         repo.git.checkout("-b", rama)
@@ -126,7 +124,6 @@ def main():
         ejecutar_comando("git init", ruta_proyecto)
 
     repo = Repo(ruta_proyecto)
-
     rama = seleccionar_rama(repo)
 
     patrones_ignore = leer_gitignore(ruta_proyecto)
@@ -139,8 +136,8 @@ def main():
         return
 
     remote_url = input("🔗 Ingresa la URL del repositorio remoto: ").strip()
-
     token = obtener_token()
+
     if remote_url.startswith("https://") and "@" not in remote_url:
         remote_url = remote_url.replace("https://", f"https://{token}@")
 
@@ -179,7 +176,6 @@ def main():
             index_commit += 1
 
             subgrupos = dividir_por_tamano(grupo)
-
             repo.config_writer().set_value("user", "name", colaborador["nombre"]).release()
             repo.config_writer().set_value("user", "email", colaborador["email"]).release()
 
@@ -188,7 +184,8 @@ def main():
                     continue
 
                 repo.index.add(subgrupo)
-                mensaje = f"Commit {i+1}.{sub_index}/{colaborador['commits']} de {colaborador['nombre']} ({len(subgrupo)} archivos)"
+                primer_archivo = os.path.basename(subgrupo[0])
+                mensaje = f"feature: {primer_archivo} | Commit {i+1}.{sub_index}/{colaborador['commits']} ({len(subgrupo)} archivos)"
                 repo.index.commit(mensaje)
                 print(f"📄 {mensaje}")
 
